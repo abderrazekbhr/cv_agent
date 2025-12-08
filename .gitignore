@@ -1,0 +1,11 @@
+chroma_langchain_db/
+bucket/
+
+.env
+venv
+__pycache__
+**/__pycache__
+=0.1.0
+
+CV
+CV_Abderrazek BELHAJ RHOUMA.pdf
