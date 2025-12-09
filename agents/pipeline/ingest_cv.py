@@ -13,7 +13,7 @@ from config.bucket import bucket_client
 
 
 def load_file(file_path:str):
-    data=bucket_client.get_object(
+    data=bucket_client().get_object(
         "s3-cv",
         file_path
     )

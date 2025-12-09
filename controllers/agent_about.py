@@ -11,10 +11,10 @@ router=APIRouter()
 
 
 @router.post("/")
-def about_user(question: str = Body(..., embed=True)):
+def about_user(question: str = Body(..., embed=True),filename: str = Body(..., embed=True)):
     messages={"messages":[{
         "role":"user",
-        "content": f"give me information about this : {question}?"
+        "content": f"give me information about this : {question}? and the cv is in the file named {filename}"
     }]}
 
     response = cv_agent.invoke(messages)
@@ -39,6 +39,28 @@ async def get_file(file_name: str = Query(...)):
     except S3Error as err:
         raise HTTPException(status_code=404, detail=f"File '{file_name}' not found")
     
+    
+@router.put("/cv")
+async def update_file(file_name: str = Query(...), cv_file:UploadFile=File):
+    try:
+        BUCKET_NAME="s3-cv"
+        client=bucket_client()
+        contents =  await cv_file.read()  # read file content
+
+        client.put_object(
+            BUCKET_NAME,
+            file_name,
+            BytesIO(contents),
+            length=len(contents),
+            content_type=cv_file.content_type
+            )
+        
+        
+        return {"message": f"{file_name} updated in MinIO",
+                }
+        
+    except S3Error as err:
+        raise HTTPException(status_code=500, detail=f"Update File {err}")
     
 
 @router.post("/cv")

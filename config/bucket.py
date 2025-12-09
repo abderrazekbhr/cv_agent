@@ -26,10 +26,7 @@ def bucket_client(bucket_name :str= "s3-cv"):
 
         if not client_bucket.bucket_exists(bucket_name):
             client_bucket.make_bucket(bucket_name)
-            print(f"Bucket '{bucket_name}' créé.")
-        else:
-            print(f"Bucket '{bucket_name}' existe déjà.")
-
+            
         return client_bucket
         
     except S3Error as err:
