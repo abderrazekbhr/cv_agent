@@ -1,13 +1,11 @@
 import os
 
-from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from agents.tools.tools import  get_information_rag
 from pydantic import BaseModel,Field
 
-load_dotenv()
 
 class ResponseData(BaseModel):
     information:str

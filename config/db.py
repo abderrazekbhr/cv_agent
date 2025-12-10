@@ -6,7 +6,7 @@ import os
 
 
 # --- DATABASE CONFIGURATION ---
-DATABASE_URL = f"postgresql+psycopg2://{os.getenv("USERNAME_DB")}:{os.getenv("PASSWORD_DB")}@localhost:5432/{os.getenv("DB_NAME")}"
+DATABASE_URL = f"postgresql+psycopg://{os.getenv('USERNAME_DB')}:{os.getenv('PASSWORD_DB')}@localhost:5432/{os.getenv('DB_NAME')}"
 
 
 engine = create_engine(
@@ -16,4 +16,17 @@ engine = create_engine(
     max_overflow=20      # number of connections that can be created after the pool reached its size
 )
 
+def get_db():
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    db = SessionLocal()
+    try:
+        yield db
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
+
 Base = declarative_base()
+

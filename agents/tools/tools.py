@@ -1,9 +1,6 @@
 from langchain.tools import tool
 import requests as rq
 from agents.pipeline.ingest_cv import rag_ingest_pipeline
-from dotenv import load_dotenv
-import os
-load_dotenv()
 
 
 

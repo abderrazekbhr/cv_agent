@@ -2,6 +2,8 @@ chroma_langchain_db/
 bucket/
 
 .env
+.env.*.local
+
 venv
 __pycache__
 **/__pycache__
