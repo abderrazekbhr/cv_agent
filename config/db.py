@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
+from dotenv import load_dotenv 
 import os 
 
+load_dotenv()
 
 # --- DATABASE CONFIGURATION ---
 DATABASE_URL = f"postgresql+psycopg://{os.getenv('USERNAME_DB')}:{os.getenv('PASSWORD_DB')}@localhost:5432/{os.getenv('DB_NAME')}"

@@ -11,11 +11,11 @@ services:
     command: server /data --console-address ":9001"
     restart: always
   db:
-    image: postgres
+    image: postgres:latest
     ports:
       - "5432:5432"
     env_file:
       - .env.db.local
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./pgdata:/data
     restart: always

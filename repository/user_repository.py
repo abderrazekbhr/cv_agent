@@ -7,27 +7,30 @@ class UserRepository:
         self.db = db
 
     def get_user(self, email: str)-> UserRead | None:
-        result = self.db.query(User).filter(User.email == email).first()
-        return UserRead(result) if result else None
+        user = self.db.query(User).filter(User.email == email).first()
+        if user:
+            return UserRead(**user.__dict__)
+        return None
 
     def create_user(self, user: UserCreate):
-        db_user = User(name=user.name, email=user.email)
+        db_user = User(**user.__dict__)
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
-        return db_user
-
+        return UserRead(**db_user.__dict__)
 
     def get_all_users(self):
-        return [UserRead(user) for user in self.db.query(User).all()]
+        return [UserRead(**user.__dict__) for user in self.db.query(User).all()]
+    
     
     
     def delete_user(self, email: str):
         user = self.db.query(User).filter(User.email == email).first()
         if user:
-            self.db.delete(user)
+            self.db.query(User).filter(User.email == email).delete()
             self.db.commit()
-        return user
+            return True
+        return False
     
     
     def update_user(self, email: str, user_update: UserUpdate):
@@ -38,3 +41,6 @@ class UserRepository:
                     setattr(user, var, value)
             self.db.commit()
         return user
+    
+    
+    

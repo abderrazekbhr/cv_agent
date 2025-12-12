@@ -17,3 +17,14 @@ def get_information_rag(query:str,filename:str="cv.pdf")->list:
     for doc in documents:
         content.append(doc.page_content)
     return content
+
+
+@tool
+def fetch_post_content(url: str) -> str:
+    """Fetches the content of a blog post from the given URL."""
+    response = rq.get(url)
+    if response.status_code == 200:
+        return response.text
+    else:
+        return f"Failed to fetch content. Status code: {response.status_code}"
+    
