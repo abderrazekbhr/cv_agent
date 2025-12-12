@@ -1,4 +1,6 @@
 import os
+from typing import Optional
+from typing_extensions import Literal
 
 from langchain.agents import create_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -8,13 +10,17 @@ from langchain.tools import BaseTool
 
 from pydantic import BaseModel,Field
 
-
 class ResponseData(BaseModel):
     information:str
     
 class ResponseIssue(BaseModel):
     tile:str
     descritpion:str
+
+class AgentResponse(BaseModel):
+    kind: Literal["data", "issue"]
+    data: Optional[ResponseData] = None
+    issue: Optional[ResponseIssue] = None
 
 
 class GeminiAgent:
@@ -36,30 +42,33 @@ class GeminiAgent:
         return agent
 
 
-
-SYSTEM_PROMPT = """You are an expert in it and manager role need your help to responde to this question.
-
-You have access to two tools:
-
-- get_information_rag: is a methode that give related data to cv  
-- fetch_post_content: is a methode that fetch content from url
-
-if a user ask you about something off me use the tools and reformulate the ressource to generate response to the query and if related data doesn't response to the query return ResponseIssue.
-"""
-
+ 
+def load_system_prompt(file_name: str) -> str:
+    with open(f"agents/prompts/{file_name}", "r") as file:
+        prompt = file.read()
+    return prompt
 
 
 agent_initializer = GeminiAgent()
 
+
+search_agent = agent_initializer.create_agent(
+    system_prompt=load_system_prompt("search_prompt.txt"),
+    response_format=None,
+    tools=[]
+)
+
 cv_agent = agent_initializer.create_agent(
     tools=[get_information_rag],
-    system_prompt=SYSTEM_PROMPT,
-    response_format=ResponseData|ResponseIssue
+    system_prompt=load_system_prompt("cv_prompt.txt"),
+    response_format=AgentResponse
 )
+
+
 
 # qa_agent = agent_initializer.create_agent(
 #     tools=[get_information_rag],
-#     system_prompt=SYSTEM_PROMPT,
+#     system_prompt=load_system_prompt("qa_prompt.txt"),
 # )
 
 

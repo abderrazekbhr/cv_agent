@@ -3,11 +3,13 @@ from fastapi import FastAPI
 from config.db import Base,engine
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
-from controllers.users import router as user_router
+
+from controllers.users_controller import router as user_router
+from controllers.qa_controller import router as qa_router
+from controllers.about_controller import router as about
 
 load_dotenv()
 
-from controllers.agent_about import router as about
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code
@@ -39,4 +41,8 @@ app.include_router(
     router=about
 )
 
-
+app.include_router(
+    tags=["QA"],
+    prefix="/qa",
+    router=qa_router
+)

@@ -3,7 +3,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.params import Query
 from fastapi.responses import StreamingResponse
 from minio import S3Error
-from agents.agent_initializer import  cv_agent
+from agents.agents import  cv_agent
 from config.bucket import bucket_client
 from io import BytesIO
 

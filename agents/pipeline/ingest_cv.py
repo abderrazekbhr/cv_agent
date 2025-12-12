@@ -13,19 +13,21 @@ from config.bucket import bucket_client
 
 
 def load_file(file_path:str):
-    data=bucket_client().get_object(
-        "s3-cv",
-        file_path
-    )
-    with open("temp.pdf","wb") as f:
-        f.write(data.read())
-    loader=PdfReader("temp.pdf")
+    try:
+        data=bucket_client().get_object(
+            "s3-cv",
+            file_path
+        )
+        loader=PdfReader(data.read())
+        
+        text=loader.pages[0].extract_text() if len(loader.pages)>0 else None
+        docs=[Document(page_content=text)]
+        
+        return docs
+    except Exception as e:
+        print(f"Error loading file: {e}")
+        return []
     
-    text=loader.pages[0].extract_text() if len(loader.pages)>0 else None
-    docs=[Document(page_content=text)]
-    
-    return docs
-
 def rag_ingest_pipeline(file_path:str):
     """this function return related to query passed"""
     
@@ -49,6 +51,9 @@ def rag_ingest_pipeline(file_path:str):
     
     # Loading file
     docs = load_file(file_path=file_path)
+    if not docs:
+        return None
+    
     
     # Splitting text
     text_splitter = RecursiveCharacterTextSplitter(

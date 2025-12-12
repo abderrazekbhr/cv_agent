@@ -9,6 +9,8 @@ def get_information_rag(query:str,filename:str="cv.pdf")->list:
     
     """this function extract related information to query from cv passed in filename"""
     vector_store=rag_ingest_pipeline(file_path=filename)
+    if vector_store is None:
+        return []
     documents=vector_store.similarity_search(
         query=query,k=2
     )
